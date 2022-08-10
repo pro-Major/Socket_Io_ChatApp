@@ -39,8 +39,6 @@ io = new Server(server, {
 
 require('../utils/socket')(io);
 
-
-
 /**
  * Listen on provided port, on all network interfaces.
  */
