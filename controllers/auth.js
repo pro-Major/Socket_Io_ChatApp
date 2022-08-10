@@ -1,5 +1,5 @@
 const models = require("../models");
-const jwt = require('jsonwebtoken'); 
+const jwt = require("jsonwebtoken");
 const { JWT_SECRETKEY, JWT_EXPIRATIONTIME } = require("../utils/constant");
 
 exports.userLogin = async (req, res, next) => {
@@ -28,7 +28,7 @@ exports.userLogin = async (req, res, next) => {
       const decoded = jwt.verify(Token, JWT_SECRETKEY);
       const createdTime = new Date(decoded.iat * 1000).toGMTString();
       await models.users.update(
-        { LastLogin: createdTime },
+        { LastLogin: createdTime, RememberToken: Token, Status: true },
         {
           where: { id: decoded.id },
         }
@@ -36,11 +36,18 @@ exports.userLogin = async (req, res, next) => {
 
       return res.status(200).json({
         message: "The user has successfully logged in",
-        Token ,
+        Token,
       });
     }
-
   } catch (error) {
     console.log(error);
   }
+};
+
+exports.userLogout = async (req, res, next) => {
+  try {
+    let token = await req.headers.authorization.split(" ")[1];
+    await models.users.update({RememberToken : null},{ where: { RememberToken: token } });
+    return res.status(204).json({ message: `Logout successfull.` });
+  } catch (error) {return error}
 };
