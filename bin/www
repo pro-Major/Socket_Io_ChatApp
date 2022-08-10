@@ -37,15 +37,9 @@ io = new Server(server, {
   },
 });
 
-//On the Socket server connection
-io.on("connection", (socket) => {
-  socket.on("chat", (payload) => {
-    io.emit("chat", payload);
-  });
-  socket.on("disconnect", () => {
-    console.log("socket disconnected");
-  });
-});
+require('../utils/socket')(io);
+
+
 
 /**
  * Listen on provided port, on all network interfaces.
