@@ -17,6 +17,10 @@ module.exports = (sequelize, DataTypes) => {
         ExpiryTime :{
             type: DataTypes.DATE,
         },
+        IsValidated : {
+            type : DataTypes.BOOLEAN,
+            defaultValue: false,
+        }
     }, {
         freezeTableName: true,
         allowNull: false,

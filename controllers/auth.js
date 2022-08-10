@@ -3,6 +3,7 @@ const jwt = require("jsonwebtoken");
 const { JWT_SECRETKEY, JWT_EXPIRATIONTIME } = require("../utils/constant");
 const sendEmail = require("../service/sendEmail");
 const { generateOtp } = require("../service/generateOtp");
+const moment = require("moment");
 
 exports.userLogin = async (req, res, next) => {
   try {
@@ -59,6 +60,9 @@ exports.userRegister = async (req,res)=>{
   try {
       const {Email} = req.body;
       const OTP = await generateOtp(Email);
+      if(!OTP.success){
+        return res.status(409).json({ message : OTP.message });
+      }
       let Msg = {
         email : Email,
         subject : `Hi, ${Email} ${OTP} is the OTP for your VyncSafe Chat Registration.`,
@@ -75,11 +79,44 @@ exports.userRegister = async (req,res)=>{
       if(mailSent){
         return res.status(201).json({ message : "Email sent successfully, Check Otp to register" });
       }else{
-        return res.status(503).json({ message : "Failed to send email, Please try again later" });
+        return res.status(503).json({ message : "Failed to send email! Please try again later" });
       }
       
   } catch (error) {
       return res.status(400).json({ error: error });
+  }
+
+}
+
+
+exports.userOtpValidate = async (req,res)=>{
+  try {
+    const { Email, Otp } = req.body;
+    const User = await models.userOtp.findOne({ where: { Email: Email } })
+    if (!User) {
+        return res.status(404).json({
+            message: "Email Not Found."
+        })
+    }
+    if(User.IsValidated){
+      return res.status(409).json({message : "User Already Validated."})
+    }
+    const isExpired = !moment().isBefore(User.ExpiryTime)
+    if(isExpired){
+      return res.status(410).json({message : "Otp Expired! Please Generate A New Otp."})
+    }
+    if(User.Otp == Otp){
+      const validateUser = await models.userOtp.update({IsValidated: true},{where : {Email : Email}})
+      if(validateUser){
+        return res.status(202).json({message : "User Validated Successfully."})
+      }else{
+        return res.status(401).json({message : "Wrong Otp! Please Enter Valid Otp."})
+        
+      }
+    }
+  
+  } catch (error) {
+      return res.status(400).json({message : error.message})
   }
 
 }
