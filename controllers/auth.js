@@ -1,6 +1,8 @@
 const models = require("../models");
 const jwt = require("jsonwebtoken");
 const { JWT_SECRETKEY, JWT_EXPIRATIONTIME } = require("../utils/constant");
+const sendEmail = require("../service/sendEmail");
+const { generateOtp } = require("../service/generateOtp");
 
 exports.userLogin = async (req, res, next) => {
   try {
@@ -51,3 +53,33 @@ exports.userLogout = async (req, res, next) => {
     return res.status(204).json({ message: `Logout successfull.` });
   } catch (error) {return error}
 };
+
+//User Registration.
+exports.userRegister = async (req,res)=>{
+  try {
+      const {Email} = req.body;
+      const OTP = await generateOtp(Email);
+      let Msg = {
+        email : Email,
+        subject : `Hi, ${Email} ${OTP} is the OTP for your VyncSafe Chat Registration.`,
+        text : `Hey!
+        Your One Time Password is ${OTP}, which is valid for 15 minutes.
+        Thank you for your interest in VyncSafe Chat. We look forward to serving you real soon.
+        
+        In case of any technical difficulty do drop us a mail at admin@pixelsoftwares.com.
+        
+        Thanks!
+        Team VyncSafe`
+      }
+      const mailSent = await sendEmail(Msg)
+      if(mailSent){
+        return res.status(201).json({ message : "Email sent successfully, Check Otp to register" });
+      }else{
+        return res.status(503).json({ message : "Failed to send email, Please try again later" });
+      }
+      
+  } catch (error) {
+      return res.status(400).json({ error: error });
+  }
+
+}
