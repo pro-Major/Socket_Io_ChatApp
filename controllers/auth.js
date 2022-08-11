@@ -8,14 +8,14 @@ const { addUser } = require("./users");
 const bcrypt = require("bcrypt");
 const uniqid = require("uniqid");
 const { sequelize } = require("../models");
-exports.userLogin = async (req, res, next) => {
+exports.userLogin = async (req, res) => {
   try {
     const { Email, Password } = req.body;
     let checkUser = await models.users.findOne({
       where: { Email: Email },
     });
     if (!checkUser) {
-      return res.status(401).json({ message: "Wrong Credentials" });
+      return res.status(401).json({ message: "User not found" });
     }
     let userDetails = await checkUser.comparePassword(Password);
     if (userDetails) {
@@ -41,9 +41,11 @@ exports.userLogin = async (req, res, next) => {
       );
 
       return res.status(200).json({
-        message: "The user has successfully logged in",
+        message: "Login Successfull.",
         Token,
       });
+    }else{
+      return res.status(401).json({ message: "Wrong Credentials" });
     }
   } catch (error) {
     console.log(error);
@@ -59,7 +61,7 @@ exports.userLogout = async (req, res, next) => {
     );
     return res.status(204).json({ message: `Logout successfull.` });
   } catch (error) {
-    return error;
+    return res.status(400).json({ message: "Something went wrong. Please try again later." });
   }
 };
 
@@ -110,7 +112,7 @@ exports.userRegister = async (req, res) => {
     if (mailSent) {
       return res
         .status(201)
-        .json({ message: "Email sent successfully, Check Otp to register" });
+        .json({ message: "Otp sent successfully to your email address. Please verify to complete the registration process." });
     } else {
       return res
         .status(503)

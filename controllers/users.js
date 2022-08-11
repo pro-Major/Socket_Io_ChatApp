@@ -15,13 +15,13 @@ exports.addUser = async (req, res) => {
         if(!IsEmailVerified){
             return res.status(401).json({message : "Please Verify your email address."})
         }
-        const Hash = await bcrypt.hash(Password, 10)
+        // const Hash = await bcrypt.hash(Password, 10)
         const userUniqueId = uniqid();
         const user = await models.users.create({
           UniqueId : userUniqueId,
           FirstName,
           LastName,
-          Password : Hash,
+          Password,
           Email,
         });
         return user;
