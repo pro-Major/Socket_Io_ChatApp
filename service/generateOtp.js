@@ -4,7 +4,7 @@ const moment = require("moment");
 exports.generateOtp = async (Email) => {
     const UserData = await models.userOtp.findOne({where : { Email: Email }});
     if(UserData){  
-        if(UserData.IsValidated){
+        if(UserData.IsEmailValidated){
         return {success : false , message : "User Already Validated." };
         }
     }

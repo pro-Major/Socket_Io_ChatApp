@@ -11,7 +11,7 @@ exports.addUser = async (req, res) => {
         const { FirstName, LastName, Password ,Email } = req.body;
         const IsEmailVerified = await models.userOtp.findOne({
             where : 
-            { Email: Email , IsValidated : true }})
+            { Email: Email , IsEmailValidated : true }})
         if(!IsEmailVerified){
             return res.status(401).json({message : "Please Verify your email address."})
         }
@@ -24,7 +24,7 @@ exports.addUser = async (req, res) => {
           Password : Hash,
           Email,
         });
-        return res.status(201).json({ message: "User Created.", data: user });
+        return user;
     } catch (error) {
         return error.json({ message: "Something went wrong"})``
     }

@@ -17,7 +17,11 @@ module.exports = (sequelize, DataTypes) => {
         ExpiryTime :{
             type: DataTypes.DATE,
         },
-        IsValidated : {
+        IsEmailValidated : {
+            type : DataTypes.BOOLEAN,
+            defaultValue: false,
+        },
+        IsMobileValidated : {
             type : DataTypes.BOOLEAN,
             defaultValue: false,
         }
