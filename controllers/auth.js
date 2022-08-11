@@ -96,9 +96,9 @@ exports.userRegister = async (req, res) => {
     //Msg 
     let Msg = {
       email: Email,
-      subject: `Hi, ${Email} ${OTP} is the OTP for your VyncSafe Chat Registration.`,
-      text: `Hey!
-        Your One Time Password is ${OTP}, which is valid for 15 minutes.
+      subject: `Hi, ${Email} ${OTP.message} is the OTP for your VyncSafe Chat Registration.`,
+      message: `Hey!
+        Your One Time Password is ${OTP.message}, which is valid for 15 minutes.
         Thank you for your interest in VyncSafe Chat. We look forward to serving you real soon.
         
         In case of any technical difficulty do drop us a mail at admin@pixelsoftwares.com.

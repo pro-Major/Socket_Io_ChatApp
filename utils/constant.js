@@ -9,7 +9,7 @@ module.exports = {
     //SMTP Configurations.
     SMTP_HOST : "smtp.mailtrap.io",
     SMTP_PORT : 2525,
-    SMTP_EMAIL : "cc95e566124fd9",
-    SMTP_PASSWORD : "6ba4a7424ce92b",
+    SMTP_EMAIL : "0d0bac90ee2336",
+    SMTP_PASSWORD : "6f35c24966abc6",
     SMTP_FROM_EMAIL : "info@pixelsoftwares.com"
 }
