@@ -9,7 +9,8 @@ var models = require("../models");
 var debug = require("debug")("socket:server");
 var http = require("http");
 const { Server } = require("socket.io");
-
+const socket = require("../socket/socket")
+const privateChat = require('../socket/privateChat');
 /**
  * Get port from environment and store in Express.
  */
@@ -36,9 +37,11 @@ io = new Server(server, {
     origin: "*",
   },
 });
+socket(io);
+privateChat(io);
 
-require('../utils/socket')(io);
-
+// require('../utils/socket')(io);
+// require('../socket/privateChat')(privateChat);
 /**
  * Listen on provided port, on all network interfaces.
  */

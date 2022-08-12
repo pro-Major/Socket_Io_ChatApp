@@ -9,10 +9,11 @@ module.exports = (sequelize,DataTypes)=>{
       },
       sentDateTime: {
         type: DataTypes.DATE,
+        defaultValue : DataTypes.NOW
       },
       conversationId: {
         type: DataTypes.INTEGER,
-        allowNull: false,
+        allowNull: true,
       },
     },
     {

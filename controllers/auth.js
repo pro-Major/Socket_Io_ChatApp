@@ -25,6 +25,7 @@ exports.userLogin = async (req, res) => {
           email: checkUser.dataValues.Email,
           firstName: checkUser.dataValues.FirstName,
           lastName: checkUser.dataValues.LastName,
+          MobileNumber : checkUser.dataValues.MobileNumber
         },
         JWT_SECRETKEY,
         {
