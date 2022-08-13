@@ -21,7 +21,8 @@ module.exports = (io) => {
       })
       socket.on("join_room",async (room) => {
         console.log(room);
-        const conversationId = await models.conversation.findOne({where : {conversationId : room}})
+        // const conversationId = await models.conversation.findOne({where : {conversationId : room}})
+        let conversationId = true;
         if(conversationId){
             console.log(`inside working`)
             socket.join(room);

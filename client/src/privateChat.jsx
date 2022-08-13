@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import io from "socket.io-client";
 import { nanoid } from "nanoid";
-const socket = io(`http://localhost:3339/peronal-chat`,{auth : {token : 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJicmlqZXNodmlzaHdha2FybWFAZ21haWwuY29tIiwiZmlyc3ROYW1lIjoiQnJpamVzaCIsImxhc3ROYW1lIjoiVmlzaHdha2FybWEiLCJpYXQiOjE2NjAyOTM2ODEsImV4cCI6MTY2Mjg4NTY4MX0.1tFlieYAFyTyEfqG7ZuQ0q60Vvi_fGrrIIc9MKSTU14'}});
+const socket = io(`http://localhost:3339/peronal-chat`,{auth : {token : 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJicmlqZXNodmlzaHdha2FybWFAZ21haWwuY29tIiwiZmlyc3ROYW1lIjoiQnJpamVzaCIsImxhc3ROYW1lIjoiVmlzaHdha2FybWEiLCJNb2JpbGVOdW1iZXIiOm51bGwsImlhdCI6MTY2MDM4NTU1OSwiZXhwIjoxNjYyOTc3NTU5fQ.NeL1orvkIYt7s_OCQd9YToNLR5WLnPAD9VjXbdsapS4'}});
 
 socket.on('connect_error', function (err) {
   console.log(`Error : ${err.message}`);

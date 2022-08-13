@@ -35,7 +35,7 @@ exports.addUser = async (req, res) => {
 exports.addContact = async (req,res) => {
     try {
         // const userData = req.userData;
-        const {Email,UniqueId,MobileNumber} = req.body;
+        const {Email=0 ,UniqueId=0,MobileNumber=0} = req.body;
         const userData = await models.users.findOne({
             where: {
                 [Op.or]: [{Email: Email}, {UniqueId: UniqueId},{MobileNumber : MobileNumber}]
@@ -45,10 +45,22 @@ exports.addContact = async (req,res) => {
         if(!userData){
             return res.status(404).json({message: 'User not found'});
         }
+        return res.status(200).json({message: 'OK'});
 
         
 
     } catch (error) {
-        
+        console.log(error.message);
+        return res.status(500).json({message: 'Internal Server Error',error});
+    }
+}
+exports.addConversation = async (req,res)=>{
+    try {
+        const { GroupName} = req.body;
+        const createConversation = await models.conversation.create({GroupName})
+
+        return res.status(201).json({message: 'created conversation successfully'});
+    } catch (error) {
+        return res.status(500).json({message: 'Internal Server Error',error});
     }
 }

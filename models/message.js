@@ -11,7 +11,7 @@ module.exports = (sequelize,DataTypes)=>{
         type: DataTypes.DATE,
         defaultValue : DataTypes.NOW
       },
-      conversationId: {
+      ConversationId: {
         type: DataTypes.INTEGER,
         allowNull: true,
       },
@@ -23,5 +23,10 @@ module.exports = (sequelize,DataTypes)=>{
       paranoid: true,
     }
   );
+    Message.associate = function(models){
+      Message.belongsTo(models.conversation,{foreignKey: "ConversationId", as : "conversationDetails"});
+    }
+
+
   return Message;
 };

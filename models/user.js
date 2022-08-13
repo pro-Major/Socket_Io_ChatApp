@@ -43,13 +43,25 @@ module.exports = (sequelize, DataTypes) => {
       paranoid: true,
     }
   );
+  // console.log(`models`,models)
+
+  Users.associate = function (models) {
+  console.log(`models`,models)
+    Users.belongsToMany(models.conversation, { through: models.group_members , foreignKey: 'ContactId'});
+  };
+
+
+
+
+
+
   // INSTANCE METHOD FOR COMPARING PASSWORD
   Users.prototype.comparePassword = function (passw) {
     return new Promise((resolve, reject) => {
       bcrypt.compare(passw, this.Password, function (err, isMatch) {
         if (err) {
           return reject(err);
-      }
+        }
         return resolve(isMatch);
       });
     });
