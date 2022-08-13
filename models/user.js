@@ -47,12 +47,8 @@ module.exports = (sequelize, DataTypes) => {
 
   Users.associate = function (models) {
   console.log(`models`,models)
-    Users.belongsToMany(models.conversation, { through: models.group_members , foreignKey: 'ContactId'});
+    Users.belongsToMany(models.conversation, { through: 'group_members', as : 'Conversation' ,foreignKey: 'usersId'});
   };
-
-
-
-
 
 
   // INSTANCE METHOD FOR COMPARING PASSWORD

@@ -2,13 +2,17 @@ module.exports = (sequelize,DataTypes)=>{
     const Conversation = sequelize.define("conversation",
     {
         ConversationId : {
-            type : DataTypes.UUID,
+            type : DataTypes.INTEGER,
             primaryKey: true,
             autoIncrement : true,
         },
         ConversationName : {
             type : DataTypes.STRING,
             allownull : false,
+        },
+        Private : {
+          type : DataTypes.BOOLEAN,
+          defaultValue : false          
         }
 
     },
@@ -23,7 +27,7 @@ module.exports = (sequelize,DataTypes)=>{
     Conversation.associate = function (models){
       console.log(models);
       Conversation.hasMany(models.message,{foreignKey: "ConversationId", as : "conversationDetails"});
-      Conversation.belongsToMany(models.users,{through: models.group_members,foreignKey: 'ConversationId'});
+      Conversation.belongsToMany(models.users,{through: 'group_members',as : 'GroupMembers',foreignKey: "ConversationId"});
 
     }
 
