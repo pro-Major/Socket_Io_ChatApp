@@ -24,13 +24,16 @@ module.exports = (sequelize, DataTypes) => {
       },
       MobileNumber: {
         type: DataTypes.STRING,
+        allowNull : false,
       },
       Password: {
         type: DataTypes.STRING,
         unique : true,
+        allowNull : false,
       },
       UniqueId: {
         type: DataTypes.STRING,
+        allowNull : false,
       },
       Status: {
         type: DataTypes.BOOLEAN,

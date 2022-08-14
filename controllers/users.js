@@ -8,7 +8,7 @@ const bcrypt = require('bcrypt');
 
 exports.addUser = async (req, res) => {
     try {
-        const { FirstName, LastName, Password ,Email } = req.body;
+        const { FirstName, LastName, Password ,Email ,MobileNumber} = req.body;
         const IsEmailVerified = await models.userOtp.findOne({
             where : 
             { Email: Email , IsEmailValidated : true }})
@@ -23,6 +23,7 @@ exports.addUser = async (req, res) => {
           LastName,
           Password,
           Email,
+          MobileNumber
         });
         return user;
     } catch (error) {
@@ -46,8 +47,8 @@ exports.addContact = async (req,res) => {
             return res.status(404).json({message: 'User not found'});
         }
         const checkConvo = await checkIfConversationExists(senderData,receiverData)
-        if(checkConvo){
-            return res.status(400).json({message: 'Conversation already exists'});
+        if(checkConvo.status){
+            return res.status(200).json({status : checkConvo.status , message: 'Conversation Found',ConversationId : checkConvo.ConversationId});
         }
         const createConv = await createConversation(senderData,receiverData);
 
@@ -77,7 +78,7 @@ exports.addSingleConversation = async (req,res)=>{
 const createConversation = async  (sender,receiver,private=true) => {
     const t = await sequelize.transaction();
     try {
-        const createConversation = await  models.conversation.create({ConversationName : sender.firstName+'_'+receiver.FirstName , Private : private},{transaction : t});
+        const createConversation = await  models.conversation.create({ConversationName : sender.MobileNumber+'_'+receiver.MobileNumber , Private : private},{transaction : t});
         await models.group_members.create({ConversationId : createConversation.ConversationId , ContactId : sender.id  },{transaction : t})
         await models.group_members.create({ConversationId : createConversation.ConversationId , ContactId : receiver.ContactId  },{transaction : t})
         await t.commit();
@@ -89,13 +90,15 @@ const createConversation = async  (sender,receiver,private=true) => {
 }
 const checkIfConversationExists = async (sender,receiver) => {
     const userExist = await sequelize.query(`
-    select c.ConversationId from conversation c join group_members g 
-    on c.ConversationId = g.ConversationId
-    where ContactId = ${sender.id} and ${receiver.ContactId} and Private = true;    
-    `)
-    if(userExist){
-        return true;
+    select ConversationId from conversation as s 
+    where s.Private = true and s.ConversationName = '${sender.MobileNumber+'_'+receiver.MobileNumber}' and 
+    s.ConversationId in (
+    select ConversationId from group_members 
+    where ContactId = ${sender.id} or ContactId = ${receiver.ContactId} );
+  `)
+    if(userExist[0].length != 0){
+        return {status : true, ConversationId : userExist[0][0].ConversationId};
     }else{
-        return false;
+        return {status : false};
     }
 }

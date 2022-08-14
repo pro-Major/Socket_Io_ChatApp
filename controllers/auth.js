@@ -22,9 +22,9 @@ exports.userLogin = async (req, res) => {
       let Token = jwt.sign(
         {
           id: checkUser.dataValues.ContactId,
-          email: checkUser.dataValues.Email,
-          firstName: checkUser.dataValues.FirstName,
-          lastName: checkUser.dataValues.LastName,
+          Email: checkUser.dataValues.Email,
+          FirstName: checkUser.dataValues.FirstName,
+          LastName: checkUser.dataValues.LastName,
           MobileNumber : checkUser.dataValues.MobileNumber
         },
         JWT_SECRETKEY,
@@ -69,10 +69,10 @@ exports.userLogout = async (req, res, next) => {
 //User Registration.
 exports.userRegister = async (req, res) => {
   try {
-    const { FirstName, LastName, Password, Email } = req.body;
+    const { FirstName, LastName, Password, Email,MobileNumber } = req.body;
 
     const IsEmailVerified = await models.userOtp.findOne({
-      where: { Email: Email, IsEmailValidated: true },
+      where: { Email: Email,MobileNumber: MobileNumber, IsEmailValidated: true },
     });
     if (IsEmailVerified) {
       return res.status(401).json({ message: "You are already authenticated." });
@@ -87,6 +87,7 @@ exports.userRegister = async (req, res) => {
       LastName,
       Password: Hash,
       Email,
+      MobileNumber,
     });
 
     //Generate OTP
@@ -144,7 +145,8 @@ exports.userOtpValidate = async (req, res) => {
     }
     if (User.Otp == Otp) {
       const t = await sequelize.transaction();
-        try {
+      try {
+        
         await models.userOtp.update({ IsEmailValidated: true },{ where: { Email: Email } },{transaction : t});
         const userData = await models.tempUser.findOne({where : {Email}},{transaction : t});
         req.body = userData;
@@ -154,6 +156,7 @@ exports.userOtpValidate = async (req, res) => {
         return res.status(202).json({ message: "User Registration Successfull." ,UniqueId : saveUser.UniqueId });
       } catch (error) {
         await t.rollback();
+        return res.status(500).json({ message: "User Registration Failed"});
       }
 
       // })
