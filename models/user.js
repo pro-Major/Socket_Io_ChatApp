@@ -3,7 +3,12 @@ const bcrypt = require("bcrypt");
 module.exports = (sequelize, DataTypes) => {
   const Users = sequelize.define(
     "users",
-    {
+    { 
+      ContactId : {
+        type : DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement : true,
+    },
       FirstName: {
         type: DataTypes.STRING,
       },
@@ -22,6 +27,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       Password: {
         type: DataTypes.STRING,
+        unique : true,
       },
       UniqueId: {
         type: DataTypes.STRING,
@@ -47,7 +53,7 @@ module.exports = (sequelize, DataTypes) => {
 
   Users.associate = function (models) {
   console.log(`models`,models)
-    Users.belongsToMany(models.conversation, { through: 'group_members', as : 'Conversation' ,foreignKey: 'usersId'});
+    Users.belongsToMany(models.conversation, { through: 'group_members', as : 'Conversation' ,foreignKey: 'ContactId'});
   };
 
 

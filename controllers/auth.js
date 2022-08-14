@@ -21,7 +21,7 @@ exports.userLogin = async (req, res) => {
     if (userDetails) {
       let Token = jwt.sign(
         {
-          id: checkUser.dataValues.id,
+          id: checkUser.dataValues.ContactId,
           email: checkUser.dataValues.Email,
           firstName: checkUser.dataValues.FirstName,
           lastName: checkUser.dataValues.LastName,
@@ -37,7 +37,7 @@ exports.userLogin = async (req, res) => {
       await models.users.update(
         { LastLogin: createdTime, RememberToken: Token, Status: true },
         {
-          where: { id: decoded.id },
+          where: { ContactId : decoded.id },
         }
       );
 
