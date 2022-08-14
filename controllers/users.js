@@ -53,7 +53,7 @@ exports.addContact = async (req,res) => {
         const createConv = await createConversation(senderData,receiverData);
 
         if(createConv.error === false){
-            return res.status(201).json({message: createConv.message , data : req.userData.Email});
+            return res.status(201).json({message: createConv.message , ConversationId : createConv.ConversationId});
         }
 
         
@@ -82,7 +82,7 @@ const createConversation = async  (sender,receiver,private=true) => {
         await models.group_members.create({ConversationId : createConversation.ConversationId , ContactId : sender.id  },{transaction : t})
         await models.group_members.create({ConversationId : createConversation.ConversationId , ContactId : receiver.ContactId  },{transaction : t})
         await t.commit();
-        return {error : false , message : `Created`};
+        return {error : false , message : `Created`,ConversationId : createConversation.ConversationId};
     } catch (error) {
         await t.rollback();
         return {error : true , message : error.message}
