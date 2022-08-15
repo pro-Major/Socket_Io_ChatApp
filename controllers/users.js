@@ -48,9 +48,13 @@ exports.addContact = async (req,res) => {
         }
         const checkConvo = await checkIfConversationExists(senderData,receiverData)
         if(checkConvo.status){
-            return res.status(200).json({status : checkConvo.status , message: 'Conversation Found',ConversationId : checkConvo.ConversationId});
+
+            const getConversationinfo = await getConversationDetails(checkConvo.ConversationId)
+
+            return res.status(200).json({status : checkConvo.status , message: 'Conversation Found',ConversationId : checkConvo.ConversationId,ConversationDetails : getConversationinfo});
         }
         const createConv = await createConversation(senderData,receiverData);
+
 
         if(createConv.error === false){
             return res.status(201).json({message: createConv.message , ConversationId : createConv.ConversationId});
@@ -91,8 +95,8 @@ const createConversation = async  (sender,receiver,private=true) => {
 const checkIfConversationExists = async (sender,receiver) => {
     const userExist = await sequelize.query(`
     select ConversationId from conversation as s 
-    where s.Private = true and s.ConversationName = '${sender.MobileNumber+'_'+receiver.MobileNumber}' and 
-    s.ConversationId in (
+    where s.Private = true and (s.ConversationName = '${sender.MobileNumber+'_'+receiver.MobileNumber}' or s.ConversationName = '${receiver.MobileNumber+'_'+sender.MobileNumber}')
+    and s.ConversationId in (
     select ConversationId from group_members 
     where ContactId = ${sender.id} or ContactId = ${receiver.ContactId} );
   `)
@@ -101,4 +105,17 @@ const checkIfConversationExists = async (sender,receiver) => {
     }else{
         return {status : false};
     }
+}
+
+const getConversationDetails = async (conversationId) => {
+    const conversationData = await models.conversation.findOne({
+        where : { ConversationId: conversationId},
+        include : {
+            model : models.message,
+            as : 'conversationDetails',
+            attributes: ['from','message','sentDateTime']
+        }
+    } 
+    );
+    return conversationData.conversationDetails;
 }

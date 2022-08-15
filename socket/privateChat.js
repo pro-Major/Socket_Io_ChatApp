@@ -21,8 +21,8 @@ module.exports = (io) => {
       })
       socket.on("join_room",async (room) => {
         console.log(room);
-        // const conversationId = await models.conversation.findOne({where : {conversationId : room}})
-        let conversationId = true;
+        const conversationId = await models.conversation.findOne({where : {conversationId : room}})
+        // let conversationId = true;
         if(conversationId){
             console.log(`inside working`)
             socket.join(room);
@@ -30,7 +30,7 @@ module.exports = (io) => {
         }
       })
       socket.on("send-message", async (message,room) => {
-        await models.message.create({from : socket.userId , message , conversationId : room})
+        await models.message.create({from : socket.userId , message , ConversationId : room })
         socket.to(room).emit("message",message);
       })
       socket.on("disconnect", () => {
